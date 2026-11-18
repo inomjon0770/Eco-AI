@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Eco AI icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="55%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#065f46"/>
+    </linearGradient>
+    <linearGradient id="lf" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#f0fdf4"/>
+      <stop offset="100%" stop-color="#86efac"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="8" y="8" width="184" height="184" rx="52" fill="url(#bg)"/>
+  <rect x="18" y="18" width="164" height="164" rx="44" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5"/>
+
+  <path d="M100 59 C131 82 131 114 100 137 C69 114 69 82 100 59 Z" fill="url(#lf)"/>
+  <path d="M100 62 L100 133" stroke="#047857" stroke-opacity="0.55" stroke-width="2.4" stroke-linecap="round"/>
+
+  <g stroke="#047857" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round" fill="none">
+    <path d="M100 78 L86 72 L80 72"/>
+    <path d="M100 95 L83 89 L77 89"/>
+    <path d="M100 112 L86 106 L80 106"/>
+    <path d="M100 78 L114 72 L120 72"/>
+    <path d="M100 95 L117 89 L123 89"/>
+    <path d="M100 112 L114 106 L120 106"/>
+  </g>
+  <g fill="#065f46">
+    <circle cx="80" cy="72" r="3"/><circle cx="77" cy="89" r="3"/><circle cx="80" cy="106" r="3"/>
+    <circle cx="120" cy="72" r="3"/><circle cx="123" cy="89" r="3"/><circle cx="120" cy="106" r="3"/>
+    <circle cx="100" cy="134" r="3.4"/>
+  </g>
+
+  <path d="M152 40 L154.8 48.2 L163 51 L154.8 53.8 L152 62 L149.2 53.8 L141 51 L149.2 48.2 Z" fill="#ffffff" opacity="0.92"/>
+</svg>
