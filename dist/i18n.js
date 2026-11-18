@@ -85,6 +85,8 @@ AI STUDIO|ИИ-СТУДИЯ|AI STUDIO
 AI video|Видеоуроки|Video guides
 Video studiyani ochish|Открыть видеостудию|Open video studio
 Video qo‘llanma|Видеоурок|Video guide
+Eco AI bilan tanishing|Знакомство с Eco AI|Meet Eco AI
+Rasm tahlili, issiqxona nazorati va Eco ball haqida video.|Видео об анализе фото, контроле теплицы и экобаллах.|Explore photo analysis, greenhouse monitoring and Eco points.
 Pomidor parvarishi sirlari|Уход за томатами|Caring for tomatoes
 Ekishdan hosilgacha bo‘lgan qisqa qo‘llanma.|Краткий путь от посадки до сбора урожая.|A quick guide from planting to harvest.
 YORDAMCHILAR|ПОМОЩНИКИ|ASSISTANTS

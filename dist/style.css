@@ -227,3 +227,5 @@ body { color: var(--pine); background: #f5f8f5; }
 }
 .care-feed { padding-inline-start: 20px; margin-block: 10px; }
 .care-feed li { margin: 8px 0; overflow-wrap: anywhere; }
+
+.thumb { background: #dff5e8 url("assets/eco-ai-video.jpg") center / contain no-repeat; }
