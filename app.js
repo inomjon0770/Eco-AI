@@ -67,7 +67,6 @@ const fileInput='<input id="picture" type="file" accept="image/*" required>';
 
 const advice={Qish:'Issiqxonada ko‘chatlarni sovuqdan asrang va yorug‘ joy tanlang.',Bahor:'Ko‘chatlarni yorug‘, shamoldan pana joyga bosqichma-bosqich ko‘chiring.',Yoz:'Issiq paytlarda shamollatish va tuproq namligini kuzating.',Kuz:'Sovuq tushishidan oldin yetilgan hosilni yig‘ing va tungi haroratni kuzating.'};
 
-const videoLessons=[['Pomidor parvarishi sirlari','tomatoes',['Ko‘chat uchun quyoshli joy tanlang.','Tuproq namligini tekshiring.','Poyani tayanchga ehtiyotkor bog‘lang.','Bir tekis rang olgan hosilni tering.']],['Sug‘orishni rejalash','greenhouse',['Tuproq namligini o‘lchang.','Namlik past bo‘lsa, ildiz atrofini sug‘oring.','Barglarni ho‘llamaslikka harakat qiling.','Keyingi o‘lchovni ishlar rejasiga kiriting.']]];
 
 function hero() {
   const [title, sub, img] = slides[slide];
@@ -268,29 +267,13 @@ function photo() {
   };
 }
 function studio() {
-  show('Video studiya',videoLessons.map(([name],i)=>`<button class="choice" data-lesson="${i}">${icon('play',15)} ${translate(name)}</button>`).join('')+'<p>'+translate('24 soniyali parvarish qo‘llanmasini tanlang.')+'</p>');
+  const choices = EcoVideo.titles.map((name, index) =>
+    '<button class="choice" data-lesson="'+index+'">'+icon('play',15)+' '+esc(translate(name))+'</button>'
+  );
+  show('Video studiya', choices.join(''));
 }
-function video(i=0) {
-  if(window.EcoVideo?.play){window.EcoVideo.play(i);return}
-  const [name,img,scenes]=videoLessons[i];
-  let sec=0,playing=true;
-  show(name,'<div class="player" id="player"><span></span></div><div class="progress"></div><button class="primary" id="pause">'+translate('Pauza')+'</button> <span id="vtime"></span>');
-  function paint(){
-    $('#player').style.backgroundImage="linear-gradient(0deg,#102b1be6,transparent 85%),url('assets/"+img+".jpg')";
-    $('#player').style.backgroundSize=(115+sec*.7)+'% auto';
-    $('#player span').textContent=translate(scenes[Math.min(3,Math.floor(sec/6))]);
-    $('.progress').style.width=(sec/24*100)+'%';
-    $('#vtime').textContent='0:'+String(sec).padStart(2,'0')+' / 0:24';
-  }
-  clearInterval(timer);paint();
-  timer=setInterval(()=>{
-    if(!dlg.open||!$('#player')){clearInterval(timer);return}
-    if(!playing)return;
-    sec++;
-    if(sec>=24){playing=false;$('#pause').textContent=translate('Qayta ko‘rish')}
-    paint();
-  },1000);
-  $('#pause').onclick=()=>{if(sec===24)sec=0;playing=!playing;$('#pause').textContent=translate(playing?'Pauza':'Davom etish');paint()};
+function video(index=0) {
+  EcoVideo.play(index);
 }
 function logo() {
   show('Ikonka yaratish',label('Belgi','<select id="symbol">'+option('leaf','Barg')+option('sprout','Nihol')+option('sun','Quyosh')+option('drop','Tomchi')+'</select>')+

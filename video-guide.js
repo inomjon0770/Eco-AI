@@ -3,6 +3,7 @@
 window.EcoVideo = (() => {
   const languages = {uz:'O‘zbekcha', ru:'Русский', en:'English'};
   const guides = [
+    {title:"Eco AI bilan tanishing", file:"eco-ai-video", poster:"eco-ai-video"},
     {
       title:'Pomidor parvarishi sirlari', file:'tomato-care', poster:'tomatoes',
       uz:['Ko‘chat uchun quyoshli joy tanlang.', 'Tuproq namligini tekshiring.', 'Poyani tayanchga ehtiyotkor bog‘lang.', 'Bir tekis rang olgan hosilni tering.'],
@@ -21,19 +22,19 @@ window.EcoVideo = (() => {
     const lang = EcoLocale.lang;
     const src = 'assets/' + guide.file + '.mp4';
     const title = EcoLocale.t(guide.title);
-    modal(title, '<video id="eco-guide" controls playsinline preload="auto" style="width:100%;aspect-ratio:16/9;border-radius:12px;background:#183c2c" poster="assets/'+guide.poster+'.jpg" aria-label="'+esc(title)+'"></video>' +
-      '<p><strong>' + EcoLocale.t('Qo‘llanma bosqichlari','Этапы урока','Guide chapters') + '</strong></p><div id="eco-chapters"></div>');
+    const chapterHeading = guide[lang] ? '<p><strong>' + EcoLocale.t('Qo‘llanma bosqichlari','Этапы урока','Guide chapters') + '</strong></p><div id="eco-chapters"></div>' : '';
+    modal(title, '<video id="eco-guide" controls playsinline preload="auto" style="width:100%;aspect-ratio:16/9;border-radius:12px;background:#183c2c" poster="assets/'+guide.poster+'.jpg" aria-label="'+esc(title)+'"></video>' + chapterHeading);
     const player = document.getElementById('eco-guide');
     const chapters = document.getElementById('eco-chapters');
     const abort = new AbortController();
     let fileUrl, chapterTime = 0;
     for (const [code,name] of Object.entries(languages)) {
-      if (typeof VTTCue !== 'function' || !player.addTextTrack) break;
+      if (!guide[code] || typeof VTTCue !== 'function' || !player.addTextTrack) break;
       const track = player.addTextTrack('captions',name,code);
       track.mode = code === lang ? 'showing' : 'disabled';
       guide[code].forEach((caption,i) => track.addCue(new VTTCue(i*6,(i+1)*6,caption)));
     }
-    guide[lang].forEach((caption,i) => {
+    (guide[lang] || []).forEach((caption,i) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'choice';
@@ -72,5 +73,5 @@ window.EcoVideo = (() => {
     }
     loadGuide();
   }
-  return {play};
+  return {play, titles: guides.map(guide => guide.title)};
 })();
