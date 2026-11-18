@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 200" width="660" height="200" role="img" aria-labelledby="title desc">
+  <title id="title">Eco AI logo</title>
+  <desc id="desc">Elektron sxema tomirli barg belgisi va ECO AI yozuvi</desc>
+
+  <defs>
+    <linearGradient id="emblem" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="55%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#065f46"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#f0fdf4"/>
+      <stop offset="100%" stop-color="#86efac"/>
+    </linearGradient>
+    <linearGradient id="word" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#065f46" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <!-- Emblem -->
+  <rect x="18" y="18" width="164" height="164" rx="46" fill="url(#emblem)" filter="url(#shadow)"/>
+  <rect x="28" y="28" width="144" height="144" rx="38" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5"/>
+
+  <!-- Leaf (smaller, centered) -->
+  <path d="M100 59 C131 82 131 114 100 137 C69 114 69 82 100 59 Z"
+        fill="url(#leaf)"/>
+  <path d="M100 62 L100 133" stroke="#047857" stroke-opacity="0.55" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- Circuit-style veins -->
+  <g stroke="#047857" stroke-opacity="0.6" stroke-width="1.9" stroke-linecap="round" fill="none">
+    <path d="M100 78 L86 72 L80 72"/>
+    <path d="M100 95 L83 89 L77 89"/>
+    <path d="M100 112 L86 106 L80 106"/>
+    <path d="M100 78 L114 72 L120 72"/>
+    <path d="M100 95 L117 89 L123 89"/>
+    <path d="M100 112 L114 106 L120 106"/>
+  </g>
+  <g fill="#065f46">
+    <circle cx="80" cy="72" r="2.8"/><circle cx="77" cy="89" r="2.8"/><circle cx="80" cy="106" r="2.8"/>
+    <circle cx="120" cy="72" r="2.8"/><circle cx="123" cy="89" r="2.8"/><circle cx="120" cy="106" r="2.8"/>
+    <circle cx="100" cy="134" r="3"/>
+  </g>
+
+  <!-- AI spark -->
+  <g fill="#ffffff" opacity="0.9">
+    <path d="M150 42 L152.6 49.4 L160 52 L152.6 54.6 L150 62 L147.4 54.6 L140 52 L147.4 49.4 Z"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="212" y="102"
+        font-family="Segoe UI, Inter, Arial, sans-serif"
+        font-size="56" font-weight="800" letter-spacing="-1.5" fill="url(#word)">ECO<tspan fill="#16a34a" dx="12">AI</tspan></text>
+
+  <!-- Accent line -->
+  <rect x="215" y="118" width="58" height="4" rx="2" fill="#22c55e"/>
+  <rect x="279" y="118" width="24" height="4" rx="2" fill="#22c55e" opacity="0.4"/>
+
+  <!-- Tagline -->
+  <text x="215" y="146"
+        font-family="Segoe UI, Inter, Arial, sans-serif"
+        font-size="15" font-weight="600" letter-spacing="2.8" fill="#4b8a6f">AQLIY · YASHIL · KELAJAK</text>
+</svg>
