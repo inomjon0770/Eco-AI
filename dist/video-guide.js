@@ -26,8 +26,10 @@ window.EcoVideo = (() => {
     modal(title, '<video id="eco-guide" controls playsinline preload="auto" style="width:100%;aspect-ratio:16/9;border-radius:12px;background:#183c2c" poster="assets/'+guide.poster+'.jpg" aria-label="'+esc(title)+'"></video>' + chapterHeading);
     const player = document.getElementById('eco-guide');
     const chapters = document.getElementById('eco-chapters');
-    const abort = new AbortController();
-    let fileUrl, chapterTime = 0;
+    let chapterTime = 0;
+    player.src = src;
+    player.muted = true;
+    player.play().catch(() => { /* Native controls remain available if autoplay is disabled. */ });
     for (const [code,name] of Object.entries(languages)) {
       if (!guide[code] || typeof VTTCue !== 'function' || !player.addTextTrack) break;
       const track = player.addTextTrack('captions',name,code);
@@ -49,29 +51,11 @@ window.EcoVideo = (() => {
       chapters.append(button);
     });
     dlg.addEventListener('close', () => {
-      abort.abort();
       player.pause();
-      if (fileUrl) URL.revokeObjectURL(fileUrl);
     }, {once:true});
     player.addEventListener('loadedmetadata', () => {
-      player.currentTime = chapterTime;
-      player.play().catch(()=>{});
+      if (chapterTime) player.currentTime = chapterTime;
     }, {once:true});
-    // Buffer each short guide locally so chapter seeking also works on static hosts without byte ranges.
-    async function loadGuide() {
-      if (location.protocol === 'file:') { player.src = src; return; }
-      try {
-        const response = await fetch(src, {signal:abort.signal});
-        if (!response.ok) throw new Error('Video unavailable');
-        const blob = await response.blob();
-        if (abort.signal.aborted) return;
-        fileUrl = URL.createObjectURL(blob);
-        player.src = fileUrl;
-      } catch {
-        if (!abort.signal.aborted) player.src = src;
-      }
-    }
-    loadGuide();
   }
   return {play, titles: guides.map(guide => guide.title)};
 })();
