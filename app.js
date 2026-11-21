@@ -1,6 +1,13 @@
 'use strict';
 const $=s=>document.querySelector(s), dlg=$('#dlg'), content=$('#content');
 const paths={leaf:'M20 3C9 2 3 6 5 14c2 7 14 7 15-11ZM4 21l12-13',drop:'M12 2C10 6 5 11 5 15a7 7 0 0 0 14 0c0-4-5-9-7-13Z',temp:'M9 14V5a3 3 0 0 1 6 0v9a5 5 0 1 1-6 0Zm3-6v9',air:'M3 9h11a3 3 0 1 0-3-3M2 13h17a3 3 0 1 1-3 3M5 17h4',coin:'M20 12a8 8 0 1 1-16 0 8 8 0 1 1 16 0ZM12 7l1.5 3.3 3.5.5-2.5 2.5.6 3.4-3.1-1.6-3.1 1.6.6-3.4L7 10.8l3.5-.5Z',bell:'M4 17h16c-2-2-2-4-2-7a6 6 0 0 0-12 0c0 3 0 5-2 7Zm5 3a4 4 0 0 0 6 0',pin:'M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Zm-5 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z',list:'M8 5h12M8 12h12M8 19h12M3 5h.1M3 12h.1M3 19h.1',spark:'m12 3 2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2ZM20 2v4m-2-2h4',film:'M3 5h18v14H3zM7 5v14m10-14v14M3 10h4m10 0h4M3 15h4m10 0h4',play:'m7 4 13 8-13 8Z',left:'m14 6-6 6 6 6',right:'m9 6 6 6-6 6',arrow:'M4 12h16m-6-6 6 6-6 6',upRight:'M6 18 18 6M7 6h11v11',down:'m6 9 6 6 6-6',plus:'M12 5v14M5 12h14',clock:'M21 12a9 9 0 1 1-18 0 9 9 0 1 1 18 0ZM12 6v6l4 2',sprout:'M12 21V11C7 12 4 9 4 5c5 0 8 2 8 6Zm0 4c0-5 3-8 9-8 0 5-3 8-9 8Z',check:'m5 12 4 4L19 6',camera:'M3 7h4l2-3h6l2 3h4v13H3ZM16 13a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',mic:'M9 5a3 3 0 0 1 6 0v7a3 3 0 0 1-6 0ZM5 11v1a7 7 0 0 0 14 0v-1M12 19v3',bug:'M6 11a6 6 0 0 1 12 0v3a6 6 0 0 1-12 0Zm2-8 2 3m6-3-2 3M2 10l4 1m12 0 4-1M2 17l4-2m12 0 4 2M12 9v10',sun:'M16 12a4 4 0 1 1-8 0 4 4 0 1 1 8 0ZM12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2',palette:'M21 12c0 4-5 2-6 4s2 4-1 5C1 23-2 4 11 3c6-1 10 4 10 9ZM7 10h.1M11 7h.1M16 8h.1'};
+Object.assign(paths, {
+  dashboard: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',
+  house: 'm2 11 10-8 10 8M5 9v12h14V9M9 21v-8h6v8',
+  calendar: 'M4 6h16v15H4zM4 10h16M8 3v5m8-5v5',
+  settings: 'M3 7h8m4 0h6M3 17h3m4 0h11M15 7a2 2 0 1 1-4 0 2 2 0 1 1 4 0ZM10 17a2 2 0 1 1-4 0 2 2 0 1 1 4 0Z',
+  edit: 'm4 16 12-12 4 4L8 20l-5 1ZM14 6l4 4'
+});
 function icon(k,n=19){return '<svg aria-hidden="true" width="'+n+'" height="'+n+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="'+(paths[k]||paths.leaf)+'"/></svg>'}
 function icons(){document.querySelectorAll('[data-i]').forEach(el=>el.innerHTML=icon(el.dataset.i))}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -73,8 +80,7 @@ function hero() {
   $('#hero-title').textContent = translate(title);
   $('#hero-sub').textContent = translate(sub);
   $('.hero').style.setProperty('--hero', "url('assets/"+img+".jpg')");
-  $('.hero').style.backgroundPosition = slide===2 ? 'center bottom' : 'center';
-  $('#slide-no').textContent = String(slide+1).padStart(2,'0');
+  $('.hero').style.setProperty('--hero-position', slide === 2 ? 'center 82%' : 'center 36%');
   $('.slide-dots').innerHTML = slides.map((_,i) => `<button class="${slide===i?'on':''}" data-slide="${i}" aria-label="${translate('Ko‘rinish','Вид','View')} ${i+1}"></button>`).join('');
 }
 function irrigation() {
@@ -92,12 +98,23 @@ function render() {
   ];
   $('#metrics').innerHTML = metrics.map(([k,label,value,unit,status],i) => `
     <button class="metric ${i===3?'eco':''}" style="${theme(k)}" data-act="${i===3?'points':'house'}">
-      <span class="metric-top">${chip(k)}<span class="metric-tag">${translate(label).toLocaleUpperCase(EcoLocale.locale)}</span></span>
+      <span class="metric-top">${chip(k)}<span class="metric-tag">${translate(label)}</span></span>
       <span class="metric-value">${formatNumber(value)}<small>${translate(unit)}</small></span>
-      <span class="metric-bottom"><span class="status">${translate(status)}</span>${chart(i)}</span>
+      <span class="metric-bottom"><span class="status">${translate(status)}</span>${i < 3 ? chart(i) : ''}</span>
     </button>`).join('');
   const today=state.tasks.filter(t=>t.date===day()).sort((a,b)=>a.time.localeCompare(b.time));
-  $('#tasklist').innerHTML=today.slice(0,3).map(row).join('')||'<p>'+translate('Bugun uchun vazifa yo‘q.')+'</p>';
+  const completed = today.filter(task => task.done).length;
+  $('#task-progress').max = today.length || 1;
+  $('#task-progress').value = completed;
+  $('#task-progress').setAttribute('aria-label', translate('Bajarildi'));
+  $('#task-count').textContent = translate('Bajarildi') + ' · ' + completed + ' / ' + today.length;
+  const hasReading = state.endpoint && Number.isFinite(Date.parse(state.updated));
+  $('#reading-source').textContent = hasReading
+    ? translate('Oxirgi o‘lchov') + ' · ' + formatDate(new Date(state.updated), {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+    : translate('Namunaviy sensor ko‘rsatkichlari');
+  $('#profile-name').textContent = state.name;
+  const priority = tasks => tasks.filter(t => !t.done).concat(tasks.filter(t => t.done));
+  $('#tasklist').innerHTML=priority(today).slice(0,3).map(row).join('')||'<p>'+translate('Bugun uchun vazifa yo‘q.')+'</p>';
   $('#season').textContent=translate(currentSeason())+(EcoLocale.lang==='uz'?' fasli':'');
   const todayDate = new Date();
   const monthsUz = ['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
@@ -107,18 +124,19 @@ function render() {
   $('.avatar').textContent=state.name.slice(0,2).toLocaleUpperCase(EcoLocale.locale);
   icons();
 }
-function row(t) {
+function row(t, editable = false) {
   const title = esc(displayTaskName(t));
   const action = t.done ? translate('Natijani ko‘rish','Посмотреть результат','View result')
     : t.startedAt ? translate('Natijani topshirish','Отправить результат','Submit result')
     : translate('Ishni boshlash','Начать работу','Begin task');
   return `<div class="taskrow ${t.done?'done':''}">${chip(t.type)}
-    <div><div class="taskname">${title}</div><small>${icon('clock',12)}${esc(t.time)}</small></div>
+    <div><div class="taskname">${title}</div><small>${icon('clock',12)}${esc(t.time)}${t.startedAt && !t.done ? ' · '+translate('Jarayonda') : ''}</small></div>
     <span class="points">+${t.points} ${translate('ball')}</span>
+    ${editable === true && !t.done && !t.startedAt ? `<button class="edit-task" data-edit="${esc(t.id)}" aria-label="${translate('Tahrirlash')} · ${title}" title="${translate('Tahrirlash')}">${icon('edit',15)}</button>` : ''}
     <button class="check" data-task="${esc(t.id)}" title="${action}" aria-label="${title} — ${action}">${icon(t.done?'check':t.startedAt?'camera':'play',12)}</button></div>`;
 }
 function renderTools() {
-  $('#toolgrid').innerHTML = toolList.map(([act,k,title])=>`<button class="tool" data-act="${act}">${chip(k)}${translate(title)}<i>${icon('upRight',14)}</i></button>`).join('');
+  $('#toolgrid').innerHTML = toolList.map(([act,k,title])=>`<button class="tool" data-act="${act}">${chip(k)}${translate(title)}</button>`).join('');
 }
 const btn=(act,key)=>`<button class="primary" data-act="${act}">${translate(key)}</button>`;
 const label=(key,input)=>`<label>${translate(key)}${input}</label>`;
@@ -126,28 +144,66 @@ const hint=s=>'<p class="note">'+s+'</p>';
 const option=(value,key)=>`<option value="${value}">${translate(key)}</option>`;
 const show=(key,html)=>modal(translate(key),html);
 function plan() {
-  const tasks = state.tasks.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
-  show('Ishlar rejasi',tasks.map(t=>'<small>'+esc(formatDay(t.date))+'</small>'+row(t)).join('')+btn('add','Vazifa qo‘shish'));
+  show('Ishlar rejasi', `<section class="planner">
+    <div class="plan-controls">
+      ${label('Vazifani qidirish', '<input type="search" id="plan-search" maxlength="80">')}
+      ${label('Vazifa holati', '<select id="plan-filter">'+option('all','Barchasi')+option('open','Rejada')+option('active','Jarayonda')+option('done','Bajarildi')+'</select>')}
+    </div>
+    <div id="plan-results" aria-live="polite"></div>
+    ${btn('add','Vazifa qo‘shish')}
+  </section>`);
+  function updateList() {
+    const query = $('#plan-search').value.trim().toLocaleLowerCase(EcoLocale.locale);
+    const status = $('#plan-filter').value;
+    const tasks = state.tasks.filter(task => {
+      const taskStatus = task.done ? 'done' : task.startedAt ? 'active' : 'open';
+      return (status === 'all' || taskStatus === status)
+        && displayTaskName(task).toLocaleLowerCase(EcoLocale.locale).includes(query);
+    }).sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+    let previousDate;
+    const rows = tasks.map(task => {
+      const heading = previousDate === task.date ? '' : '<h3 class="plan-date">'+esc(formatDay(task.date))+'</h3>';
+      previousDate = task.date;
+      return heading + row(task, true);
+    });
+    $('#plan-results').innerHTML = rows.join('') || '<p class="plan-empty">'+translate('Vazifa topilmadi')+'</p>';
+  }
+  $('#plan-search').oninput = updateList;
+  $('#plan-filter').onchange = updateList;
+  updateList();
 }
 function formatDay(value) {
   const date = new Date(value+'T12:00:00');
   return Number.isFinite(date.valueOf()) ? formatDate(date) : value;
 }
-function add() {
-  show('Yangi vazifa',`<form id="newtask">
+function add(existing) {
+  show(existing ? 'Vazifani tahrirlash' : 'Yangi vazifa',`<form id="newtask">
     ${label('Vazifa nomi',`<input name="name" required maxlength="80" placeholder="${translate('Masalan, barglarni tekshirish')}">`)}
     ${label('Ish turi','<select name="type">'+option('drop','Sug‘orish')+option('leaf','O‘simlikka dori qo‘llash')+option('sprout','Parvarish')+option('air','Shamollatish')+'</select>')}
     ${label('Sana','<input type="date" name="date" value="'+day()+'" required>')}
     ${label('Vaqt','<input type="time" name="time" required value="09:00">')}
     <label class="inline"><input type="checkbox" name="remind" checked>${translate('Eslatma qo‘yish')}</label>
     <button class="primary">${translate('Saqlash')}</button></form>`);
-  $('#newtask').onsubmit=e=>{
+  const form = $('#newtask');
+  if (existing) {
+    form.elements.namedItem('name').value = displayTaskName(existing);
+    for (const field of ['date','time','type']) form.elements[field].value = existing[field];
+    form.elements.remind.checked = existing.remind !== false;
+  }
+  form.onsubmit=e=>{
     e.preventDefault();
     const values=new FormData(e.target);
     const name=values.get('name').trim();
-    if(!name) return;
-    state.tasks.push({id:crypto.randomUUID(),name,type:values.get('type'),time:values.get('time'),date:values.get('date'),remind:values.has('remind'),points:15,done:false});
-    if (!save()) { state.tasks.pop(); return; }
+    if (!name) { form.elements.namedItem('name').focus(); return; }
+    const updated = {
+      ...(existing || {id:crypto.randomUUID(),points:15,done:false}),
+      name:existing && name === displayTaskName(existing) ? existing.name : name,
+      type:values.get('type'), time:values.get('time'), date:values.get('date'), remind:values.has('remind')
+    };
+    if (existing && (updated.time !== existing.time || updated.date !== existing.date)) updated.notified = false;
+    const previousTasks = state.tasks;
+    state.tasks = existing ? previousTasks.map(t => t.id === existing.id ? updated : t) : [...previousTasks, updated];
+    if (!save()) { state.tasks = previousTasks; return; }
     render();plan();
   };
 }
@@ -340,10 +396,15 @@ function profile() {
 }
 const acts={plan,add,house,season,points,alerts,photo,voice,plant,pests,studio,video,logo,profile,prev(){slide=(slide+2)%3;hero()},next(){slide=(slide+1)%3;hero()}};
 document.addEventListener('click',e=>{
-  const a=e.target.closest('[data-act],[data-task],[data-slide],[data-season],[data-lesson],[data-sms]');
+  const a=e.target.closest('[data-act],[data-task],[data-edit],[data-slide],[data-season],[data-lesson],[data-sms]');
   if(!a)return;
   const d=a.dataset;
   if(d.act){acts[d.act]?.();return}
+  if(d.edit) {
+    const selected = state.tasks.find(t => t.id === d.edit && !t.startedAt && !t.done);
+    if (selected) add(selected);
+    return;
+  }
   if(d.task){
     const selected=state.tasks.find(t=>t.id===d.task);
     if(!selected)return;
@@ -360,7 +421,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('change',e=>{if(e.target.dataset.rem){state.tasks.find(t=>t.id===e.target.dataset.rem).remind=e.target.checked;save()}});
 document.addEventListener('eco:language',()=>{render();hero();renderTools()});
 function route(){const hash=location.hash.slice(1)||'panel';document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('active',a.hash==='#'+hash));if(hash==='house')house();if(hash==='plan')plan();if(hash==='tools')$('#toolsection').scrollIntoView({behavior:'smooth'});if(hash==='panel')window.scrollTo({top:0,behavior:'smooth'})}
-document.querySelectorAll('nav a,.brand').forEach(a=>a.addEventListener('click',()=>{if(location.hash===a.hash)route()}));window.addEventListener('hashchange',route);$('#close').onclick=()=>dlg.close();dlg.onclick=e=>{if(e.target===dlg){const r=dlg.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dlg.close()}};dlg.onclose=()=>{finishListening();clearInterval(timer);if(window.speechSynthesis)speechSynthesis.cancel();if(['#house','#plan'].includes(location.hash)){history.replaceState(null,'','#panel');document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('active',a.hash==='#panel'))}};
+document.querySelectorAll('nav a,.brand').forEach(a=>a.addEventListener('click',()=>{if(location.hash===a.hash)route()}));window.addEventListener('hashchange',route);$('#close').onclick=()=>dlg.close();dlg.onclick=e=>{if(e.target===dlg){const r=dlg.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dlg.close()}};dlg.onclose=()=>{content.querySelector('video')?.pause();finishListening();clearInterval(timer);if(window.speechSynthesis)speechSynthesis.cancel();if(['#house','#plan'].includes(location.hash)){history.replaceState(null,'','#panel');document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('active',a.hash==='#panel'))}};
 function reminders() {
   const now=new Date(),today=day(),time=now.toTimeString().slice(0,5);
   const due=state.tasks.filter(t=>!t.done&&t.remind!==false&&!t.notified&&t.date===today&&t.time<=time);

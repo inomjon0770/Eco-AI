@@ -70,10 +70,11 @@
       state.sensorHistory = previousHistory;
       return;
     }
-    if (previous && previous.source === source) {
+    {
       const limits = options();
       fields.forEach(field => {
-        if (beyond(previous, limits, field) || !beyond(entry, limits, field)) return;
+        const alreadyBeyond = previous?.source === source && beyond(previous, limits, field);
+        if (alreadyBeyond || !beyond(entry, limits, field)) return;
         document.dispatchEvent(new CustomEvent('eco:threshold', {
           detail: {metric: field.metric, value: entry[field.metric], direction: field.direction}
         }));
@@ -130,13 +131,30 @@
       <button class="primary" type="submit">${text('apply')}</button> <span class="eq-status" role="status"></span></form>`;
   }
 
+  function sourceRecords() {
+    return records().filter(record => record.source === state.endpoint);
+  }
+  function exportHistory() {
+    const headings = ['received_at_utc','moisture_percent','temperature_c','aqi'];
+    const rows = sourceRecords().map(record => [
+      new Date(record.receivedAt).toISOString(), record.moisture, record.temperature, record.aqi
+    ]);
+    const csv = [headings, ...rows].map(row => row.join(',')).join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'eco-ai-' + day() + '.csv';
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
   function refreshReadings() {
     const format = new Intl.NumberFormat(document.documentElement.lang, {maximumFractionDigits: 2});
     if (view === 'history') {
       const time = new Intl.DateTimeFormat(document.documentElement.lang, {month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
-      const rows = records().slice().reverse().map(record => `<tr><td>${time.format(record.receivedAt)}</td>${fields.map(f => `<td>${format.format(record[f.metric])}${f.unit}</td>`).join('')}</tr>`).join('');
+      const rows = sourceRecords().slice().reverse().map(record => `<tr><td>${time.format(record.receivedAt)}</td>${fields.map(f => `<td>${format.format(record[f.metric])}${f.unit}</td>`).join('')}</tr>`).join('');
       const headings = ['time', ...fields.map(f => f.metric)].map(key => '<th scope="col">'+text(key)+'</th>').join('');
-      content.querySelector('#eq-history').innerHTML = rows ? `<div class="eq-scroll"><table><thead><tr>${headings}</tr></thead><tbody>${rows}</tbody></table></div>` : `<p class="note">${text('empty')}</p><button type="button" class="primary" data-act="house">${text('connect')}</button>`;
+      content.querySelector('#eq-history').innerHTML = rows ? `<div class="eq-scroll"><table><thead><tr>${headings}</tr></thead><tbody>${rows}</tbody></table></div><button class="primary" id="export-readings">${translate('CSV yuklab olish')}</button>` : `<p class="note">${text('empty')}</p><button type="button" class="primary" data-act="house">${text('connect')}</button>`;
       return;
     }
     const latest = state.readings;
@@ -150,6 +168,8 @@
   }
 
   document.addEventListener('click', event => {
+    if (event.target.closest('#export-readings')) { exportHistory(); return; }
+    if (event.target.closest('#history-button')) { openEquipment('history'); return; }
     if (event.target.closest('#equipment-button')) {openEquipment(); return}
     if (!visible()) return;
     const tab = event.target.closest('[data-eq-view]');

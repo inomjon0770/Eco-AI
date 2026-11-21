@@ -216,5 +216,18 @@ Javob olish|Получить ответ|Get answer
 Savolni namlik, harorat, havo, hosil yoki ishlar rejasi haqida yozing.|Задайте вопрос о влажности, температуре, воздухе, урожае или плане работ.|Ask a question about moisture, temperature, air quality, harvest or your work plan.
 Ismingiz|Ваше имя|Your name
 `);
+  add(`
+Ko‘rsatkichlar|Показатели|Readings
+O‘lchovlar tarixi|История замеров|Reading history
+Ma’lumotlar qurilmangizda saqlanadi|Данные сохраняются на вашем устройстве|Data is saved on your device
+Vazifani qidirish|Поиск задач|Search tasks
+Vazifa holati|Статус задачи|Task status
+Rejada|Запланировано|Planned
+Jarayonda|В процессе|In progress
+Vazifa topilmadi|Задач не найдено|No tasks found
+Vazifani tahrirlash|Изменить задачу|Edit task
+Tahrirlash|Изменить|Edit
+CSV yuklab olish|Скачать CSV|Download CSV
+`);
   return { get lang(){return language}, get locale(){return locales[language]}, t, bind };
 })();
