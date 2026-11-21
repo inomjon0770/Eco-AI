@@ -215,3 +215,126 @@ dialog:has(.planner) { width: min(680px,94vw); }
 #content label.care-answer { font-size: .95rem; }
 dialog .taskrow { font-size: .9rem; }
 select:focus-visible { outline-offset: 1px; }
+
+/* Seasonal accents follow the same selection as the planting advice. */
+:root[data-season="autumn"] {
+  --season-page: #fcf6e9; --season-nav: #513623; --season-accent: #f8cf79;
+  --season-soft: #fff0d0; --season-line: #ead3a5; --pine: #3d3024;
+  --forest: #865023; --border: #e7ddc9; --muted: #695c4b;
+  --sunlight: rgb(255 190 75 / .49); --photo-filter: sepia(.54) saturate(1.2) brightness(.95);
+  --shade: #352515; --card-accent: #fffcf5;
+}
+:root[data-season="spring"] {
+  --season-page: #f4f8f0; --season-nav: #264939; --season-accent: #d4edaf;
+  --season-soft: #ecf4df; --season-line: #cbdfbd; --forest: #356641;
+  --sunlight: rgb(255 217 231 / .32); --photo-filter: saturate(1.1); --shade: #173f2a;
+}
+:root[data-season="summer"] {
+  --season-page: #f7f8ea; --season-nav: #29452f; --season-accent: #f6de85;
+  --season-soft: #f9f0c9; --season-line: #e3d89e; --forest: #47622f;
+  --sunlight: rgb(255 224 125 / .58); --photo-filter: saturate(1.22); --shade: #223b20;
+}
+:root[data-season="winter"] {
+  --season-page: #f0f5f8; --season-nav: #233e50; --season-accent: #c5e2f3;
+  --season-soft: #e6f0f7; --season-line: #c2d9e6; --pine: #233e50;
+  --forest: #345f76; --border: #d4e0e7; --muted: #4e626e;
+  --sunlight: rgb(206 234 255 / .48); --photo-filter: saturate(.58) brightness(.99); --shade: #1b3345;
+}
+body { background: var(--season-page); }
+.sidebar { background: var(--season-nav); }
+.brand b { color: var(--season-accent); }
+.sidebar nav a { color: #fffaf2; }
+.sidebar nav a:hover { background: rgb(255 255 255 / .1); }
+.sidebar nav a.active, .avatar { color: var(--season-nav); background: var(--season-accent); }
+.profile-copy small, .avatar-wrap > i { color: #eeece2; }
+.toolbar, .panel, .tool { background-color: var(--card-accent, white); }
+.season, .metric.eco { background: var(--season-soft); border-color: var(--season-line); }
+.season, .textbtn, .workspace-name i { color: var(--forest); }
+.hero::before {
+  background-image: linear-gradient(90deg, var(--shade), transparent 82%), var(--hero);
+  filter: var(--photo-filter);
+}
+.hero-body, .hero-foot { position: relative; z-index: 1; }
+.equipment { background: var(--season-soft); color: var(--season-nav); }
+.slide-dots button.on::after { background: var(--season-accent); }
+.season-scene {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  container-type: size;
+  background: radial-gradient(ellipse at 84% 0%, var(--sunlight), transparent 64%);
+  mask-image: linear-gradient(90deg, transparent 2%, #0006 25%, #000 48%);
+}
+.season-piece {
+  position: absolute; left: var(--x); top: -40px; width: var(--size);
+  aspect-ratio: 1; animation: season-fall var(--period) linear var(--phase) infinite;
+}
+.season-piece b {
+  display: block; width: 100%; height: 100%; transform: rotate(var(--angle));
+  animation: season-sway calc(var(--period) * .6) ease-in-out var(--phase) infinite alternate;
+}
+/* Two silhouettes, coloured halves and branching veins keep the leaves readable in motion. */
+[data-season="autumn"] .season-piece b {
+  --leaf-lit: #ffdc66; --leaf-shadow: #ce821b;
+  background:
+    linear-gradient(90deg, transparent 48%, #90601d 50%, transparent 53%),
+    repeating-linear-gradient(36deg, transparent 0 22%, #834d242b 23% 25%, transparent 26% 40%) left / 50% 100% no-repeat,
+    repeating-linear-gradient(-36deg, transparent 0 22%, #834d243d 23% 25%, transparent 26% 40%) right / 50% 100% no-repeat,
+    linear-gradient(95deg, var(--leaf-shadow), var(--leaf-lit) 52%, var(--leaf-shadow));
+  clip-path: polygon(50% 0,59% 22%,68% 15%,65% 41%,78% 29%,80% 38%,97% 33%,87% 51%,98% 54%,69% 71%,72% 78%,53% 76%,52% 100%,47% 100%,48% 76%,28% 79%,30% 70%,2% 55%,12% 50%,3% 33%,20% 38%,22% 28%,36% 42%,32% 16%,42% 22%);
+}
+[data-season="autumn"] .season-piece:nth-child(3n) b { --leaf-lit: #ffc279; --leaf-shadow: #b75419; }
+[data-season="autumn"] .season-piece:nth-child(2n) b {
+  width: 62%; border-radius: 95% 3% 88% 5%; clip-path: none;
+}
+[data-season="spring"] .season-piece b {
+  width: 58%; height: 70%; border-radius: 85% 18% 75% 35%;
+  background: linear-gradient(135deg,#fffaf5 18%,#f6bfc9 70%,#d58aa2);
+}
+[data-season="summer"] .season-piece { animation-direction: reverse; }
+[data-season="summer"] .season-piece b {
+  width: 25%; height: 25%; border-radius: 50%; background: #fff0aa;
+  box-shadow: 0 0 9px 3px #ffe79a80;
+}
+[data-season="winter"] .season-piece b {
+  width: 32%; height: 32%; border-radius: 50%; background: #f4fbff;
+  box-shadow: 0 0 4px #daeeffcc;
+}
+[data-season="winter"] .season-piece:nth-child(3n) b {
+  width: 66%; height: 66%; border-radius: 0; box-shadow: none;
+  background: linear-gradient(90deg,transparent 45%,white 46% 54%,transparent 55%),
+              linear-gradient(30deg,transparent 46%,white 47% 53%,transparent 54%),
+              linear-gradient(150deg,transparent 46%,white 47% 53%,transparent 54%);
+}
+@keyframes season-fall {
+  from { transform: translate3d(0,0,0); }
+  to { transform: translate3d(var(--drift),calc(100cqh + 84px),0); }
+}
+@keyframes season-sway {
+  from { transform: translateX(-6px) rotate(var(--angle)) rotateY(12deg); }
+  to { transform: translateX(8px) rotate(calc(var(--angle) + 75deg)) rotateY(49deg); }
+}
+.season-options { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+.season-option {
+  display: flex; align-items: center; gap: 10px; padding: 12px; min-width: 0;
+  text-align: start; font-weight: 600; font-size: .95rem;
+  border: 1px solid var(--border); border-radius: 12px; background: #fff;
+}
+.season-option:first-child { grid-column: 1 / -1; }
+.season-option[aria-pressed="true"] { background: var(--season-soft); border-color: var(--forest); }
+.season-option > svg { margin-left: auto; color: var(--forest); }
+.season-swatch { padding: 8px; display: inline-flex; border-radius: 10px; background: #edf0ec; color: #495e50; }
+[data-tone="spring"] .season-swatch { color: #40703c; background: #e6f3de; }
+[data-tone="summer"] .season-swatch { color: #875a14; background: #fff0b8; }
+[data-tone="autumn"] .season-swatch { color: #944d18; background: #ffde9d; }
+[data-tone="winter"] .season-swatch { color: #3d6581; background: #deedf6; }
+.season-motion input { accent-color: var(--forest); }
+@media (max-width: 670px) {
+  .season-piece:nth-child(4n+1), .season-piece:nth-child(4n+2) { display: none; }
+  .season-swatch { padding: 5px; }
+  .season-option { gap: 6px; padding: 9px 7px; }
+}
+:root[data-still="true"] .season-piece { top: var(--rest); animation: none; }
+:root[data-still="true"] .season-piece b { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .season-piece { top: var(--rest); animation: none; }
+  .season-piece b { animation: none; }
+}

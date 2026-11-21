@@ -14,7 +14,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 const translate = EcoLocale.t;
 const formatDate = (date, options) => new Intl.DateTimeFormat(EcoLocale.locale, options).format(date);
 const formatNumber = n => n.toLocaleString(EcoLocale.locale);
-const currentSeason = () => state.season || defaultSeason;
+const currentSeason = () => seasonNames.includes(state.season) ? state.season : seasonNames[Math.floor(((new Date().getMonth() + 1) % 12) / 3)];
 function displayTaskName(task) {
   const careNames = {
     water: ['Sug‘orish','Полив','Watering'],
@@ -27,8 +27,7 @@ function displayTaskName(task) {
   return sample && sample.name === task.name ? translate(sample.name) : task.name;
 }
 EcoLocale.bind();
-const day=()=>new Date().toLocaleDateString('sv-SE'),now=new Date(),seasonNames=['Qish','Bahor','Yoz','Kuz'];
-const defaultSeason=seasonNames[Math.floor(((now.getMonth()+1)%12)/3)];
+const day=()=>new Date().toLocaleDateString('sv-SE'),seasonNames=['Qish','Bahor','Yoz','Kuz'];
 const seed={name:'Ikrom',season:'',tasks:[['Tuproqni sug‘orish','08:00',20,'drop'],['Ko‘chatlarni tekshirish','11:30',15,'sprout'],['Issiqxonani shamollatish','15:00',10,'air']].map(([name,time,points,type],i)=>({id:'seed'+i,name,time,points,type,date:day(),done:false})),readings:{moisture:64,temperature:24.5,aqi:32},endpoint:'',updated:'',phone:''};
 let state;try{state={...seed,...JSON.parse(localStorage.getItem('eco-garden-v1')||'{}')}}catch{state=seed}
 function save(){try{localStorage.setItem('eco-garden-v1',JSON.stringify(state));return true}catch{alert(translate('Qurilmada saqlash uchun joy yetarli emas.'));return false}}
@@ -83,12 +82,46 @@ function hero() {
   $('.hero').style.setProperty('--hero-position', slide === 2 ? 'center 82%' : 'center 36%');
   $('.slide-dots').innerHTML = slides.map((_,i) => `<button class="${slide===i?'on':''}" data-slide="${i}" aria-label="${translate('Ko‘rinish','Вид','View')} ${i+1}"></button>`).join('');
 }
+const seasonThemes = {
+  Bahor: {key:'spring', icon:'sprout', chrome:'#264939'},
+  Yoz:   {key:'summer', icon:'sun', chrome:'#29452f'},
+  Kuz:   {key:'autumn', icon:'leaf', chrome:'#513623'},
+  Qish:  {key:'winter', icon:'snow', chrome:'#233e50'}
+};
+paths.snow = 'M12 2v20M3.4 7l17.2 10M3.4 17 20.6 7M9 4l3 3 3-3M9 20l3-3 3 3M4 10l4-1-1-4m10 14-1-4 4-1M7 19l1-4-4-1m16-4-4-1 1-4';
+function applySeason() {
+  const theme = seasonThemes[currentSeason()];
+  const root = document.documentElement;
+  root.dataset.season = theme.key;
+  root.dataset.still = String(state.seasonMotion === false);
+  document.querySelector('meta[name="theme-color"]').content = theme.chrome;
+  $('.season [data-i]').dataset.i = theme.icon;
+  const scene = $('.season-scene');
+  if (scene.childElementCount) return;
+  // Staggered starting phases populate the banner without per-frame JavaScript.
+  const pieces = document.createDocumentFragment();
+  for (let i = 0; i < 18; i++) {
+    const piece = document.createElement('span');
+    piece.className = 'season-piece';
+    piece.append(document.createElement('b'));
+    piece.style.setProperty('--x', (7 + i * 29 % 91) + '%');
+    piece.style.setProperty('--rest', (5 + i * 37 % 86) + '%');
+    piece.style.setProperty('--size', (18 + i * 7 % 22) + 'px');
+    piece.style.setProperty('--angle', (i * 53 % 170 - 85) + 'deg');
+    piece.style.setProperty('--drift', (i % 2 ? 1 : -1) * (14 + i * 7 % 42) + 'px');
+    piece.style.setProperty('--period', (8 + i * 3 % 7) + 's');
+    piece.style.setProperty('--phase', -(i * 2.37 + 1.8) + 's');
+    pieces.append(piece);
+  }
+  scene.append(pieces);
+}
 function irrigation() {
   const moisture = state.readings.moisture;
   if (moisture < (state.equipment?.minMoisture ?? 40)) return translate('Sug‘orish kerak');
   return translate(moisture > 75 ? 'Namlik yuqori' : 'Me’yorida');
 }
 function render() {
+  applySeason();
   const r = state.readings;
   const metrics = [
     ['drop','Tuproq namligi',r.moisture,'%',irrigation()],
@@ -272,8 +305,27 @@ function alerts() {
   $('#phone').onchange=e=>{state.phone=e.target.value;save()};
 }
 function season() {
-  show('Faslni tanlang','<div class="seasonwrap">'+['Avtomatik',...seasonNames].map(s=>`<button class="choice" data-season="${s}">${translate(s)}</button>`).join('')+'</div>'+
+  const options = ['Avtomatik','Bahor','Yoz','Kuz','Qish'].map(name => {
+    const theme = seasonThemes[name];
+    const active = name === (state.season || 'Avtomatik');
+    return `<button class="season-option" data-season="${name}" data-tone="${theme?.key || 'auto'}" aria-pressed="${active}">
+      <span class="season-swatch">${icon(theme?.icon || 'calendar',22)}</span>
+      <span>${translate(name)}</span>${active ? icon('check',17) : ''}
+    </button>`;
+  });
+  show('Faslni tanlang','<div class="season-options">'+options.join('')+'</div>'+
+    '<label class="inline season-motion"><input type="checkbox" id="season-motion" '+(state.seasonMotion !== false ? 'checked' : '')+'>'+
+    translate('Fasl animatsiyasi','Сезонная анимация','Seasonal animation')+'</label>'+
     hint(translate('Avtomatik rejimda fasl taqvimga qarab tanlanadi. Ekish tavsiyalari tanlangan faslga moslashadi.')));
+  $('#season-motion').onchange = event => {
+    const previous = state.seasonMotion;
+    state.seasonMotion = event.target.checked;
+    if (!save()) {
+      state.seasonMotion = previous;
+      event.target.checked = previous !== false;
+    }
+    applySeason();
+  };
 }
 function plant() {
   const season=currentSeason();
@@ -411,7 +463,13 @@ document.addEventListener('click',e=>{
     if(!selected.done&&!selected.startedAt&&window.EcoCare?.startTask)window.EcoCare.startTask(selected);
     else task(d.task);
   } else if(d.slide!==undefined){slide=+d.slide;hero()}
-  else if(d.season){state.season=d.season==='Avtomatik'?'':d.season;save();render();dlg.close()}
+  else if(d.season){
+    const previous = state.season;
+    state.season = d.season === 'Avtomatik' ? '' : d.season;
+    if (!save()) { state.season = previous; return; }
+    render();
+    dlg.close();
+  }
   else if(d.lesson!==undefined)video(+d.lesson);
   else if(d.sms){
     e.preventDefault();const t=state.tasks.find(x=>x.id===d.sms);
